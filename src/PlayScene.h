@@ -42,8 +42,7 @@ private:
 	// Other
 	std::vector<PathNode*> m_pGrid;
 	void m_buildGrid();
-	void m_CheckShipLOS(DisplayObject* object);
-	//bool m_CheckAgentLOS(Agent* agent, DisplayObject* object);
+	bool m_CheckAgentLOS(Agent* agent, DisplayObject* object);
 	void m_CheckPathNodeLOS();
 	PathNode* m_findClosestPathNode(Agent* agent);
 	void m_toggleGrid(bool state);

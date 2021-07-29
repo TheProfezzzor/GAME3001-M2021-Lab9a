@@ -25,10 +25,9 @@ void PlayScene::draw()
 void PlayScene::update()
 {
 	updateDisplayList();
-	m_CheckShipLOS(m_pTarget);
 
-	/*m_CheckAgentLOS(m_pShip, m_pTarget);
-	m_CheckPathNodeLOS();*/
+	//m_CheckAgentLOS(m_pShip, m_pTarget);
+	m_CheckPathNodeLOS();
 
 	// Set three conditions of decision tree here.
 	//decisionTree->getLOSNode()->setLOS(decisionTree->getAgent()->hasLOS()); // Or use m_pShip if you want to be lazy/wrong.
@@ -189,29 +188,30 @@ void PlayScene::m_toggleGrid(bool state)
 	}
 }
 
-void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
+bool PlayScene::m_CheckAgentLOS(Agent* agent, DisplayObject* target_object)
 {
-	m_pShip->setHasLOS(false);
-	// if ship to target distance is less than or equal to LOS Distance
-	auto ShipToTargetDistance = Util::getClosestEdge(m_pShip->getTransform()->position, target_object );
-	if (ShipToTargetDistance <= m_pShip->getLOSDistance())
+	bool hasLOS = false;
+	agent->setHasLOS(hasLOS);
+	// if agent to target distance is less than or equal to LOS Distance
+	auto AgentToTargetDistance = Util::getClosestEdge(agent->getTransform()->position, target_object ); // Might revert to non-edge.
+	if (AgentToTargetDistance <= agent->getLOSDistance())
 	{
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
-			if ((object->getType() != m_pShip->getType()) && (object->getType() != target_object->getType()))
+			if ((object->getType() != agent->getType()) && (object->getType() != target_object->getType()))
 			{
 				// check if object is farther than than the target
-				auto ShipToObjectDistance = Util::getClosestEdge(m_pShip->getTransform()->position, object);
-				if (ShipToObjectDistance <= ShipToTargetDistance)
+				auto AgentToObjectDistance = Util::getClosestEdge(agent->getTransform()->position, object);
+				if (AgentToObjectDistance <= AgentToTargetDistance)
 					contactList.push_back(object);
 			}
 		}
-		auto hasLOS = CollisionManager::LOSCheck(m_pShip->getTransform()->position,
-			m_pShip->getTransform()->position + m_pShip->getCurrentDirection() * m_pShip->getLOSDistance(),
-			contactList, target_object);
-		m_pShip->setHasLOS(hasLOS);
+		const auto agentTarget = agent->getTransform()->position + agent->getCurrentDirection() * agent->getLOSDistance();
+		hasLOS = CollisionManager::LOSCheck(agent, agentTarget, contactList, target_object);
+		agent->setHasLOS(hasLOS);
 	}
+	return hasLOS;
 }
 
 void PlayScene::m_CheckPathNodeLOS()
