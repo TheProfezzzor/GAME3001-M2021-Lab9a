@@ -214,12 +214,18 @@ void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 	}
 }
 
-//void PlayScene::m_CheckPathNodeLOS()
-//{
-//
-//}
+void PlayScene::m_CheckPathNodeLOS()
+{
+	for (auto path_node : m_pGrid)
+	{
+		auto targetDirection = m_pTarget->getTransform()->position - path_node->getTransform()->position;
+		auto normalizedDirection = Util::normalize(targetDirection);
+		path_node->setCurrentDirection(normalizedDirection);
+		m_CheckAgentLOS(path_node, m_pTarget);
+	}
+}
 
-//PathNode* PlayScene::m_findClosestPathNode(Agent* agent)
-//{
-//
-//}
+PathNode* PlayScene::m_findClosestPathNode(Agent* agent)
+{
+
+}
