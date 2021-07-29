@@ -397,7 +397,7 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 				}
 				break;
 			case PATH_NODE:
-				if (lineRectEdgeCheck(start_point, end_point, width, height))
+				if (lineRectEdgeCheck(start_point, rect_start, width, height))
 				{
 					return true;
 				}
